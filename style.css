@@ -1,0 +1,192 @@
+/* style.css */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    border-bottom: none; /* Remove underline */
+    height: 80px; /* Fixed height for the navigation bar */
+}
+
+.logo {
+    height: 200px; /* Adjust logo to fit within the navigation bar height */
+    max-height: 200px; /* Ensure the logo doesn't exceed the navigation bar height */
+}
+
+ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+ul li {
+    display: inline;
+}
+
+ul a {
+    text-decoration: none; /* Remove underline */
+    color: black;
+    font-weight: bold;
+    font-size: 16px; /* Adjust font size if needed */
+}
+
+ul a:hover {
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+.event-button {
+    position: relative;
+    padding: 12px 18px;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    height: 100%; /* Make the button match the height of the navigation bar */
+}
+
+.event-button:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    border-radius: 50px;
+    background: #b1dae7;
+    width: 0%;
+    height: 45px;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.event-button span {
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #234567;
+    z-index: 1;
+}
+
+.event-button svg {
+    position: relative;
+    top: 0;
+    margin-left: 10px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: #234567;
+    stroke-width: 2;
+    transform: translateX(-5px);
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.event-button:hover:before {
+    width: 100%;
+}
+
+.event-button:hover svg {
+    transform: translateX(0);
+}
+
+.event-button:active {
+    transform: scale(0.95);
+}
+
+section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px 20px;
+}
+
+.text-content {
+    max-width: 60%; /* Adjust to take up more space */
+}
+
+h1 {
+    font-size: 48px; /* Increase font size */
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 24px; /* Increase font size */
+    font-weight: 400;
+    margin-bottom: 40px;
+}
+
+.start-creating { 
+    background: #a370f0; 
+    color: white; 
+    font-family: inherit; 
+    padding: 0.35em; 
+    padding-left: 1.2em; 
+    font-size: 17px; 
+    font-weight: 500; 
+    border-radius: 0.9em; 
+    border: none; 
+    letter-spacing: 0.05em; 
+    display: flex; 
+    align-items: center; 
+    box-shadow: inset 0 0 1.6em -0.6em #714da6; 
+    overflow: hidden; 
+    position: relative; 
+    height: 2.8em; 
+    padding-right: 3.3em; 
+    cursor: pointer; 
+} 
+
+.start-creating .icon { background: white; 
+    margin-left: 1em; 
+    position: absolute; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: 2.2em; 
+    width: 2.2em; 
+    border-radius: 0.7em; 
+    box-shadow: 0.1em 0.1em 0.6em 0.2em #7b52b9; 
+    right: 0.3em; 
+    transition: all 0.3s; 
+} 
+
+.start-creating:hover .icon { 
+    width: calc(100% - 0.6em); 
+} 
+
+.start-creating .icon svg { 
+    width: 1.1em; 
+    transition: transform 0.3s; 
+    color: #7b52b9; 
+} 
+
+.start-creating:hover .icon svg { 
+    transform: translateX(0.1em); 
+} 
+
+.start-creating:active .icon { 
+    transform: scale(0.95); 
+}
+
+video {
+    max-width: 40%; /* Adjust to fit on the screen */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
