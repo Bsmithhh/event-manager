@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+    <h2>FullCalendar</h2>
+    <div class="calendar-container">
+        <div id="calendar"></div>
+    </div>
+    <br>
+    <div class="create-event">
+        <button id="create-event-button">Create New Event</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        
+
+        $(document).ready(function() {
+            $('#calendar').fullCalendar();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('create-event-button').addEventListener('click', handleCreateEvent);
+        });
+
+        async function handleCreateEvent() {
+            const title = prompt('Enter event title:');
+            const description = prompt('Enter event description:');
+            const date = prompt('Enter event date (YYYY-MM-DD):');
+            const location = prompt('Enter event location:');
+
+            // Validate inputs
+            if (title && date) {
+                // Proceed to add the event to Supabase
+                await addEventToSupabase({ title, description, date, location });
+            } else {
+                alert('Event title and date are required.');
+            }
+        }
+
+        async function addEventToSupabase(event) {
+            const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            const supabaseUrl = 'https://jgxxbtcgswdoubwbslkl.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpneHhidGNnc3dkb3Vid2JzbGtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUyMzgyNDQsImV4cCI6MjA1MDgxNDI0NH0.AA23PUgpaOIDOns9_0C2NEm36wTfwuJh2xqYTu7q8Jo'; // Replace with your actual key
+            // Use the exact table name "Events"
+            const { data, error } = await supabase.from('Events').insert([event]);
+
+            if (error) {
+                console.error('Error adding event:', error.message);
+                alert('Failed to add event');
+            } else {
+                console.log('Event added:', data);
+                alert('Event added successfully');
+                // Refresh the calendar to show the new event
+                loadEvents(); // Ensure you have this function to load and display events
+            }
+        }
+
+        async function loadEvents() {
+            const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // Use the exact table name "Events"
+            const { data, error } = await supabase.from('Events').select('*');
+
+            if (error) {
+                console.error('Error loading events:', error.message);
+            } else {
+                console.log('Events loaded:', data);
+                // Code to update the calendar with the loaded events
+                $('#calendar').fullCalendar('removeEvents'); // Clear existing events
+                $('#calendar').fullCalendar('addEventSource', data); // Add new events
+            }
+        }
+    </script>
+</body>
+</html>
