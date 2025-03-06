@@ -45,7 +45,7 @@ ul a:hover {
     transition: color 0.3s;
 }
 
-.event-button {
+.event-button, .start-creating {
     position: relative;
     padding: 12px 18px;
     transition: all 0.2s ease;
@@ -56,9 +56,10 @@ ul a:hover {
     align-items: center;
     overflow: hidden;
     height: 100%; /* Make the button match the height of the navigation bar */
+    display: none; /* Hidden by default */
 }
 
-.event-button:before {
+.event-button:before, .start-creating:before {
     content: "";
     position: absolute;
     top: 50%;
@@ -73,7 +74,7 @@ ul a:hover {
     z-index: -1;
 }
 
-.event-button span {
+.event-button span, .start-creating span {
     position: relative;
     font-family: 'Poppins', sans-serif;
     font-size: 18px;
@@ -83,7 +84,7 @@ ul a:hover {
     z-index: 1;
 }
 
-.event-button svg {
+.event-button svg, .start-creating svg {
     position: relative;
     top: 0;
     margin-left: 10px;
@@ -97,16 +98,21 @@ ul a:hover {
     z-index: 1;
 }
 
-.event-button:hover:before {
+.event-button:hover:before, .start-creating:hover:before {
     width: 100%;
 }
 
-.event-button:hover svg {
+.event-button:hover svg, .start-creating:hover svg {
     transform: translateX(0);
 }
 
-.event-button:active {
+.event-button:active, .start-creating:active {
     transform: scale(0.95);
+}
+
+.event-button:disabled, .start-creating:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 section {
@@ -286,5 +292,21 @@ ul {
 .example-2 .icon-content a[data-social="youtube"] .filled,
 .example-2 .icon-content a[data-social="youtube"] ~ .tooltip {
   background-color: #ff0000;
+}
+
+.view-calendar-button {
+    /* Maintain similar styling to your other buttons */
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.view-calendar-button:hover {
+    background-color: #45a049;
 }
 
