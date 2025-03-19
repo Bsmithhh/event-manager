@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css"/>
+    <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+    <h2>Calendar</h2>
+    <div class="calendar-container">
+        <div id="calendar"></div>
+    </div>
+    <br>
+    <div class="create-event">
+        <button id="create-event-button">Create New Event</button>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+
+    <!-- Calendar functionality -->
+    <script>
+        $(document).ready(function() {
+            // Initialize calendar
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultView: 'month',
+                editable: false,
+                displayEventTime: false, // Hide time since we're using all-day events
+                events: function(start, end, timezone, callback) {
+                    loadEvents().then(events => {
+                        callback(events);
+                    });
+                },
+                eventRender: function(event, element) {
+                    // Add tooltips to events
+                    element.attr('title', 
+                        `${event.title}\n${event.description || ''}\nStart: ${moment(event.start).format('YYYY-MM-DD')}\nEnd: ${moment(event.end).format('YYYY-MM-DD')}`
+                    );
+                }
+            });
+
+            // Add event listener for create button
+            $('#create-event-button').click(handleCreateEvent);
+        });
+
+        async function loadEvents() {
+            try {
+                const { data, error } = await window.supabase
+                    .from('Events')
+                    .select('*');
+
+                if (error) throw error;
+
+                console.log('Raw events from database:', data); // Debug log
+
+                // Transform events for FullCalendar
+                const events = data.map(event => ({
+                    id: event.id,
+                    title: event.title,
+                    start: moment(event.start).format('YYYY-MM-DD'), // Format dates
+                    end: moment(event.end_time).format('YYYY-MM-DD'),
+                    description: event.description,
+                    allDay: true // Make all events all-day events
+                }));
+
+                console.log('Transformed events:', events); // Debug log
+                return events;
+            } catch (error) {
+                console.error('Error loading events:', error);
+                return [];
+            }
+        }
+
+        async function handleCreateEvent() {
+            const title = prompt('Enter event title:');
+            const description = prompt('Enter event description:');
+            const start = prompt('Enter start date (YYYY-MM-DD):');
+            const end_time = prompt('Enter end date (YYYY-MM-DD):');
+
+            if (!title || !start || !end_time) {
+                alert('Event title, start date, and end date are required.');
+                return;
+            }
+
+            try {
+                const { data, error } = await window.supabase
+                    .from('Events')
+                    .insert([{ 
+                        title, 
+                        description, 
+                        start,
+                        end_time
+                    }]);
+
+                if (error) throw error;
+
+                alert('Event added successfully');
+                
+                // Force a complete refresh of events
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').fullCalendar('refetchEvents');
+                
+            } catch (error) {
+                console.error('Error adding event:', error);
+                alert('Failed to add event: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
