@@ -1797,21 +1797,123 @@ h2 {
 @media screen and (max-width: 768px) {
     .calendar-container {
         padding: 15px;
+        margin: 10px;
+        border-radius: 16px;
     }
 
     .fc-toolbar {
         padding: 15px;
         flex-direction: column;
         gap: 10px;
+        text-align: center;
     }
 
     .filter-controls {
         flex-direction: column;
         padding: 15px;
+        margin: 10px;
+        gap: 15px;
     }
 
     .search-box input {
         width: 100%;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Make category buttons more touch-friendly */
+    .category-filters {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        min-width: 100px;
+    }
+
+    /* Adjust calendar header */
+    .fc-toolbar h2 {
+        font-size: 1.2rem !important;
+        margin: 10px 0 !important;
+    }
+
+    /* Make buttons more touch-friendly */
+    .fc-button {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+
+    /* Adjust footer for mobile */
+    .footer {
+        padding: 15px 0;
+    }
+
+    .footer-content {
+        padding: 0 15px;
+    }
+
+    .linkedin-link {
+        width: 90%;
+        max-width: 300px;
+        justify-content: center;
+        padding: 12px 20px;
+    }
+
+    /* Adjust modals for mobile */
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 20px;
+    }
+
+    .modal input,
+    .modal select,
+    .modal textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 10px;
+    }
+
+    /* Adjust calendar day cells */
+    .fc-day-number {
+        padding: 8px !important;
+        font-size: 14px !important;
+    }
+
+    /* Make events more readable on mobile */
+    .fc-event {
+        padding: 4px 6px !important;
+    }
+
+    .fc-event .fc-title {
+        font-size: 12px !important;
+    }
+}
+
+/* Additional adjustments for very small screens */
+@media screen and (max-width: 480px) {
+    .filter-controls {
+        margin: 5px;
+    }
+
+    .category-filters {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 10px 15px;
+    }
+
+    .fc-toolbar {
+        margin-bottom: 10px !important;
+    }
+
+    .calendar-container {
+        margin: 5px;
+        padding: 10px;
     }
 }
 
