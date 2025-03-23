@@ -100,6 +100,7 @@ $(document).ready(function() {
             
             // Store the event ID for the poll submission
             window.currentEventId = event.id;
+            updatePollResponses(event.id);
         }
     });
     console.log('Calendar initialization complete');
@@ -132,6 +133,7 @@ $(document).ready(function() {
             alert('Response submitted successfully!');
             $('#pollModal').hide();
             $('#pollForm')[0].reset();
+            updatePollResponses(window.currentEventId);
         } catch (error) {
             console.error('Error submitting poll response:', error);
             alert('Failed to submit response. Please try again.');
@@ -200,4 +202,47 @@ $(document).ready(function() {
         // Rerender events with new filter
         $('#calendar').fullCalendar('rerenderEvents');
     });
-}); 
+});
+
+async function updatePollResponses(eventId) {
+    try {
+        // Fetch responses for this event from Supabase
+        const { data: responses, error } = await supabase
+            .from('Polls')
+            .select('availability')
+            .eq('event_id', eventId);
+
+        if (error) throw error;
+
+        // Count responses by availability
+        const counts = {
+            going: 0,
+            maybe: 0,
+            not_going: 0
+        };
+
+        responses.forEach(response => {
+            counts[response.availability]++;
+        });
+
+        // Update the UI
+        Object.keys(counts).forEach(type => {
+            // Update count number
+            const countElement = document.querySelector(`.progress-item .progress-label .count[data-type="${type}"]`);
+            if (countElement) {
+                countElement.textContent = counts[type];
+            }
+
+            // Update progress bar width
+            const total = responses.length || 1; // Prevent division by zero
+            const percentage = (counts[type] / total) * 100;
+            const progressBar = document.querySelector(`.progress-item .progress.${type}`);
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching poll responses:', error);
+    }
+} 
