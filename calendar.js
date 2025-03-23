@@ -1,7 +1,12 @@
 // Initialize calendar
 $(document).ready(function() {
     console.log('Calendar initialization starting...');
-    $('#calendar').fullCalendar({
+    // Store the original events
+    let allEvents = [];
+    let currentCategory = 'all';
+
+    // Update the events function to store events
+    const calendar = $('#calendar').fullCalendar({
         header: {
             left: 'prev,next today',
             center: 'title',
@@ -23,20 +28,19 @@ $(document).ready(function() {
                         return;
                     }
 
-                    console.log('Raw events from Supabase:', events);
-
-                    // Transform events for FullCalendar
-                    const formattedEvents = events.map(event => ({
+                    // Transform and store events
+                    allEvents = events.map(event => ({
                         id: event.id,
                         title: event.title,
-                        start: event.start, // Use date directly from database
-                        end: event.end_time, // Use date directly from database
+                        start: event.start,
+                        end: event.end_time,
                         description: event.description,
-                        allDay: true
+                        category: event.category || 'default',
+                        allDay: true,
+                        className: `event-${event.category || 'default'}`
                     }));
 
-                    console.log('Formatted events:', formattedEvents);
-                    callback(formattedEvents);
+                    callback(allEvents);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -44,9 +48,30 @@ $(document).ready(function() {
                 });
         },
         eventRender: function(event, element) {
-            element.attr('title', 
-                `${event.title}\n${event.description || ''}`
-            );
+            // Add event ID to the element
+            element.attr('data-event-id', event.id);
+            element.attr('data-category', event.category || 'default');
+            
+            // Add tooltip
+            element.attr('title', `${event.title}\n${event.description || ''}`);
+            
+            // Filter based on search term and category
+            let showEvent = true;
+            
+            // Search filter
+            if (window.currentSearch) {
+                const searchTerm = window.currentSearch.toLowerCase();
+                const titleMatch = event.title.toLowerCase().includes(searchTerm);
+                const descriptionMatch = event.description?.toLowerCase().includes(searchTerm) || false;
+                showEvent = titleMatch || descriptionMatch;
+            }
+            
+            // Category filter
+            if (showEvent && currentCategory !== 'all') {
+                showEvent = event.category === currentCategory;
+            }
+            
+            return showEvent;
         },
         eventClick: function(event) {
             console.log('Clicked event:', event);
@@ -132,8 +157,9 @@ $(document).ready(function() {
         const eventData = {
             title: $('#eventTitle').val(),
             description: $('#eventDescription').val(),
-            start: $('#eventStart').val().split('T')[0], // Get only the date part
-            end_time: $('#eventEnd').val().split('T')[0] // Get only the date part
+            start: $('#eventStart').val().split('T')[0],
+            end_time: $('#eventEnd').val().split('T')[0],
+            category: $('#eventCategory').val() // Add category to event data
         };
 
         try {
@@ -152,5 +178,26 @@ $(document).ready(function() {
             console.error('Error creating event:', error);
             alert('Failed to create event. Please try again.');
         }
+    });
+
+    // Add search functionality
+    $('#searchInput').on('input', function() {
+        const searchTerm = $(this).val();
+        window.currentSearch = searchTerm;
+        $('#calendar').fullCalendar('rerenderEvents');
+    });
+
+    // Add category filter functionality
+    $('.category-filters .filter-btn').click(function() {
+        // Remove active class from all buttons
+        $('.category-filters .filter-btn').removeClass('active');
+        // Add active class to clicked button
+        $(this).addClass('active');
+        
+        // Update current category
+        currentCategory = $(this).data('category');
+        
+        // Rerender events with new filter
+        $('#calendar').fullCalendar('rerenderEvents');
     });
 }); 
