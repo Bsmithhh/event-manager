@@ -1,82 +1,32 @@
-let supabaseInitialized = false;
-
+// Handle login form submission
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Wait for Supabase to be available
-        let attempts = 0;
-        while (!window.supabase && attempts < 10) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            attempts++;
-        }
+    console.log('DOM Content Loaded');
 
-        if (!window.supabase) {
-            throw new Error('Supabase failed to initialize');
-        }
+    // Check if we're on a protected page (calendar.html)
+    const isProtectedPage = window.location.pathname.includes('calendar.html');
+    const isLoginPage = window.location.pathname.includes('login.html');
+    
+    // Check for existing session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // If not logged in and trying to access protected page, redirect to login
+    if (!session && isProtectedPage) {
+        window.location.href = "login.html";
+        return;
+    }
 
-        supabaseInitialized = true;
-        console.log('Supabase initialized successfully');
-
-        // Log Supabase initialization status
-        console.log('Supabase initialization check:', {
-            supabaseExists: !!window.supabase,
-            authExists: !!(window.supabase && window.supabase.auth),
-            clientConfig: window.supabase?.constructor?.name
-        });
-
-        // Test Supabase connection
-        const { data, error } = await supabase.from('Events').select('count').single();
-        if (error) {
-            console.error('Supabase test query error:', error);
-            throw error;
-        }
-        console.log('Supabase connection successful');
-
-        async function handleSignIn(email, password) {
-            try {
-                if (!supabaseInitialized) {
-                    throw new Error('Supabase not initialized. Please refresh the page.');
-                }
-
-                console.log('Attempting sign in with:', email);
-                
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) {
-                    console.error('Sign in error:', error);
-                    throw error;
-                }
-
-                if (!data.user) {
-                    throw new Error('No user data received');
-                }
-
-                console.log('Sign in successful');
-                sessionStorage.setItem('isClientLoggedIn', 'true');
-                sessionStorage.setItem('userEmail', data.user.email);
-                
-                // Verify the session was set
-                const sessionCheck = sessionStorage.getItem('isClientLoggedIn');
-                console.log('Session storage set:', sessionCheck);
-
-                // Add a delay before redirect
-                await new Promise(resolve => setTimeout(resolve, 500));
-                window.location.href = "calendar.html";
-
-            } catch (error) {
-                console.error('Sign in failed:', error);
-                alert(`Login failed: ${error.message}`);
-            }
-        }
-
-        const loginForm = document.getElementById('login-form');
+    // Handle login form if on login page
+    if (isLoginPage) {
+        console.log('On login page, looking for form with ID:', 'loginForm');
+        const loginForm = document.getElementById('loginForm');
+        console.log('Found form:', loginForm);
+        
         if (!loginForm) {
-            throw new Error('Login form not found in the document');
+            console.error('Login form not found');
+            return;
         }
 
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email')?.value;
             const password = document.getElementById('password')?.value;
@@ -86,72 +36,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            handleSignIn(email, password);
-        });
-
-        // Update the function to check specifically for your client's ID
-        function updateCreateEventButton() {
-            const createEventButtons = document.querySelectorAll('.event-button, .start-creating');
-            
-            supabase.auth.getUser().then(({ data: { user }, error }) => {
-                const isClient = user?.id === 'aff5156c-5907-4d35-bba7-c85f3b3e83d1';
-                
-                createEventButtons.forEach(button => {
-                    if (isClient) {
-                        button.style.display = 'flex';
-                        button.disabled = false;
-                    } else {
-                        button.style.display = 'none';
-                        button.disabled = true;
-                    }
-                });
-            });
-        }
-
-        // Call this function when the page loads and after login/logout
-        updateCreateEventButton();
-        
-        // Subscribe to auth state changes
-        supabase.auth.onAuthStateChange((event, session) => {
-            updateCreateEventButton();
-        });
-
-        async function handleSignOut() {
             try {
-                if (!supabaseInitialized) {
-                    throw new Error('Supabase not initialized');
-                }
-
-                const { error } = await supabase.auth.signOut();
-                if (error) throw error;
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
                 
-                sessionStorage.removeItem('isClientLoggedIn');
-                sessionStorage.removeItem('userEmail');
-                window.location.href = "index.html";
+                if (error) throw error;
+
+                // Store session info
+                if (data.session) {
+                    // Redirect to calendar page
+                    window.location.href = "calendar.html";
+                }
             } catch (error) {
-                console.error('Sign out error:', error);
-                alert(`Sign out failed: ${error.message}`);
+                console.error('Sign-in process failed:', error);
+                alert('Login failed. Please try again.');
             }
-        }
-
-        // Add this function to verify Supabase initialization
-        function verifySupabaseInit() {
-            if (!window.supabase) {
-                console.error('Supabase not initialized');
-                return false;
-            }
-            return true;
-        }
-
-        // Add this function to check login status
-        function checkLoginStatus() {
-            const isLoggedIn = sessionStorage.getItem('isClientLoggedIn') === 'true';
-            console.log('Current login status:', isLoggedIn);
-            return isLoggedIn;
-        }
-
-    } catch (err) {
-        console.error('Supabase connection error:', err);
-        alert('Error connecting to the database. Please refresh the page.');
+        });
     }
 });
+
+// Handle logout
+async function handleLogout() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        window.location.href = "login.html";
+    } catch (error) {
+        console.error('Error logging out:', error);
+        alert('Error logging out. Please try again.');
+    }
+} 

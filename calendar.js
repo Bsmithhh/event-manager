@@ -1,90 +1,156 @@
-document.addEventListener('DOMContentLoaded', async function() {
-    // Wait for Supabase to be initialized
-    let attempts = 0;
-    while (!window.supabase && attempts < 10) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-    }
-
-    if (!window.supabase) {
-        console.error('Supabase failed to initialize');
-        return;
-    }
-
-    // Initialize the calendar
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
+// Initialize calendar
+$(document).ready(function() {
+    console.log('Calendar initialization starting...');
+    $('#calendar').fullCalendar({
+        header: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            right: 'month,agendaWeek,agendaDay'
         },
-        events: async function(info, successCallback, failureCallback) {
-            try {
-                // Use window.supabase to fetch events
-                const { data, error } = await window.supabase
-                    .from('Events')
-                    .select('*');
+        defaultView: 'month',
+        navLinks: true,
+        editable: true,
+        eventLimit: true,
+        displayEventTime: false, // Hide time
+        events: function(start, end, timezone, callback) {
+            supabase
+                .from('Events')
+                .select('*')
+                .then(({ data: events, error }) => {
+                    if (error) {
+                        console.error('Error fetching events:', error);
+                        callback([]);
+                        return;
+                    }
 
-                if (error) throw error;
+                    console.log('Raw events from Supabase:', events);
 
-                const events = data.map(event => ({
-                    id: event.id,
-                    title: event.title,
-                    start: event.date,
-                    description: event.description,
-                    location: event.location,
-                    allDay: true
-                }));
+                    // Transform events for FullCalendar
+                    const formattedEvents = events.map(event => ({
+                        id: event.id,
+                        title: event.title,
+                        start: event.start, // Use date directly from database
+                        end: event.end_time, // Use date directly from database
+                        description: event.description,
+                        allDay: true
+                    }));
 
-                successCallback(events);
-            } catch (error) {
-                console.error('Error loading events:', error);
-                failureCallback(error);
+                    console.log('Formatted events:', formattedEvents);
+                    callback(formattedEvents);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    callback([]);
+                });
+        },
+        eventRender: function(event, element) {
+            element.attr('title', 
+                `${event.title}\n${event.description || ''}`
+            );
+        },
+        eventClick: function(event) {
+            console.log('Clicked event:', event);
+            
+            // Show the poll modal
+            const pollModal = document.getElementById('pollModal');
+            
+            // Add event details to the modal
+            const modalTitle = pollModal.querySelector('h2');
+            modalTitle.innerHTML = `Event: ${event.title}`;
+            
+            // Add description before the form
+            const form = pollModal.querySelector('#pollForm');
+            let descriptionDiv = pollModal.querySelector('.event-description');
+            if (!descriptionDiv) {
+                descriptionDiv = document.createElement('div');
+                descriptionDiv.className = 'event-description';
+                form.parentNode.insertBefore(descriptionDiv, form);
             }
-        },
-        eventClick: function(info) {
-            alert(`
-                Event: ${info.event.title}
-                ${info.event.extendedProps.description ? '\nDescription: ' + info.event.extendedProps.description : ''}
-                ${info.event.extendedProps.location ? '\nLocation: ' + info.event.extendedProps.location : ''}
-            `);
+            descriptionDiv.innerHTML = `
+                <p><strong>Description:</strong></p>
+                <p>${event.description || 'No description available'}</p>
+            `;
+            
+            pollModal.style.display = 'block';
+            
+            // Store the event ID for the poll submission
+            window.currentEventId = event.id;
         }
     });
+    console.log('Calendar initialization complete');
 
-    calendar.render();
+    // Handle Create Event button click
+    window.handleCreateEvent = function() {
+        const modal = document.getElementById('createEventModal');
+        modal.style.display = 'block';
+    };
 
-    // Handle form submission for creating events
-    document.getElementById('createEventForm').addEventListener('submit', async function(e) {
+    // Handle poll form submission
+    $('#pollForm').submit(async function(e) {
         e.preventDefault();
-        
-        const eventData = {
-            title: document.getElementById('eventTitle').value,
-            description: document.getElementById('eventDescription').value,
-            date: document.getElementById('eventDate').value,
-            location: document.getElementById('eventLocation').value
+
+        const pollData = {
+            event_id: window.currentEventId,
+            respondent_name: $('#respondent_name').val(),
+            availability: $('#availability').val(),
+            comment: $('#comment').val()
         };
 
         try {
-            await window.eventHandlers.createEvent(eventData);
-            calendar.refetchEvents(); // Refresh calendar events
-            bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
-            document.getElementById('createEventForm').reset();
+            const { data, error } = await supabase
+                .from('Polls')
+                .insert([pollData])
+                .select();
+
+            if (error) throw error;
+
+            alert('Response submitted successfully!');
+            $('#pollModal').hide();
+            $('#pollForm')[0].reset();
         } catch (error) {
-            console.error('Error creating event:', error);
-            alert('Failed to create event: ' + error.message);
+            console.error('Error submitting poll response:', error);
+            alert('Failed to submit response. Please try again.');
         }
     });
-});
 
-// Add this function to format events for display
-function formatEvents(events) {
-    return events.map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        start: event.start,
-        end: event.end_time
-    }));
-} 
+    // Handle modal close button
+    $('.close').click(function() {
+        $(this).closest('.modal').hide();
+    });
+
+    // Handle clicking outside modal
+    $(window).click(function(event) {
+        if ($(event.target).hasClass('modal')) {
+            $('.modal').hide();
+        }
+    });
+
+    // Handle event form submission
+    $('#createEventForm').submit(async function(e) {
+        e.preventDefault();
+
+        const eventData = {
+            title: $('#eventTitle').val(),
+            description: $('#eventDescription').val(),
+            start: $('#eventStart').val().split('T')[0], // Get only the date part
+            end_time: $('#eventEnd').val().split('T')[0] // Get only the date part
+        };
+
+        try {
+            const { data, error } = await supabase
+                .from('Events')
+                .insert([eventData])
+                .select();
+
+            if (error) throw error;
+
+            alert('Event created successfully!');
+            $('#createEventModal').hide();
+            $('#createEventForm')[0].reset();
+            $('#calendar').fullCalendar('refetchEvents');
+        } catch (error) {
+            console.error('Error creating event:', error);
+            alert('Failed to create event. Please try again.');
+        }
+    });
+}); 

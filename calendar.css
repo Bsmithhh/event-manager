@@ -24,3 +24,201 @@ button {
   button:active {
     transform: translateY(-1px);
   }
+
+/* Poll Modal Styles */
+#pollModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#pollModal .modal-content {
+    background: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    position: relative;
+}
+
+#pollModal .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.poll-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #6c63ff;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.poll-btn:hover {
+    background: #5a52d5;
+}
+
+/* Add to existing poll modal styles */
+#pollModal .form-group {
+    margin-bottom: 15px;
+}
+
+#pollModal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+#pollModal input,
+#pollModal select,
+#pollModal textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#pollModal textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+#pollModal .poll-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Calendar Container */
+.calendar-container {
+    background: var(--calendar-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--calendar-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px var(--calendar-shadow);
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Calendar Header */
+.fc-toolbar {
+    margin-bottom: 20px !important;
+    padding: 10px;
+    background: var(--calendar-header-bg);
+    border-radius: 12px;
+}
+
+.fc-toolbar h2 {
+    font-size: 1.5rem !important;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Calendar Grid */
+.fc-view-container {
+    background: var(--calendar-bg);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Event Styles */
+.fc-event {
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    margin: 2px !important;
+    border: none !important;
+    font-size: 0.9em !important;
+}
+
+.event-work {
+    background-color: #4CAF50 !important;
+    border-color: #388E3C !important;
+}
+
+.event-social {
+    background-color: #2196F3 !important;
+    border-color: #1976D2 !important;
+}
+
+.event-important {
+    background-color: #F44336 !important;
+    border-color: #D32F2F !important;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
+    background: var(--calendar-bg);
+    border-radius: 16px;
+    border: 1px solid var(--calendar-border);
+}
+
+.search-box input {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--calendar-border);
+    background: var(--calendar-bg);
+    color: var(--text-primary);
+    width: 250px;
+}
+
+.category-filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--calendar-border);
+    background: var(--calendar-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--accent-color), var(--gradient-end));
+    color: white;
+    border: none;
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .fc-view-container {
+    background: var(--calendar-bg);
+}
+
+[data-theme="dark"] .fc-toolbar {
+    background: var(--calendar-header-bg);
+}

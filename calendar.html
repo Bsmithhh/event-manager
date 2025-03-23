@@ -3,19 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <title>Calendar - Planit</title>
+    <!-- Load Bootstrap first -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <!-- Then FullCalendar CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css"/>
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Load Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Load your custom CSS last -->
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="calendar.css">
 </head>
 <body>
+    <div class="background-animation">
+        <div class="gradient-blob blob-1"></div>
+        <div class="gradient-blob blob-2"></div>
+        <div class="gradient-blob blob-3"></div>
+    </div>
+    <!-- The animated background elements are added via CSS -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Planit</a>
+            <div class="auth-buttons">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    🌙
+                </button>
+                <a href="#" class="btn btn-secondary" onclick="handleCreateEvent()">Create Event</a>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=User" alt="User Profile">
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Profile</a>
+                        <a href="#" class="dropdown-item">Settings</a>
+                        <a href="#" class="dropdown-item" onclick="handleLogout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <h2>Calendar</h2>
+    <div class="filter-controls">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search events...">
+        </div>
+        <div class="category-filters">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="work">Work</button>
+            <button class="filter-btn" data-category="social">Social</button>
+            <button class="filter-btn" data-category="important">Important</button>
+        </div>
+    </div>
     <div class="calendar-container">
         <div id="calendar"></div>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
     </div>
-    <br>
-    <div class="create-event">
-        <button id="create-event-button">Create New Event</button>
+
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Event</h2>
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Title:</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description:</label>
+                    <textarea id="eventDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventStart">Start Date:</label>
+                    <input type="datetime-local" id="eventStart" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventEnd">End Date:</label>
+                    <input type="datetime-local" id="eventEnd" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Poll Modal -->
+    <div id="pollModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Event Availability</h2>
+            <form id="pollForm">
+                <div class="form-group">
+                    <label for="respondent_name">Your Name:</label>
+                    <input type="text" id="respondent_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="availability">Availability:</label>
+                    <select id="availability" required>
+                        <option value="going">Going</option>
+                        <option value="maybe">Maybe</option>
+                        <option value="not_going">Not Going</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" rows="3"></textarea>
+                </div>
+                <button type="submit" class="poll-btn">Submit Response</button>
+            </form>
+        </div>
     </div>
 
     <!-- Load dependencies -->
@@ -24,99 +122,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabaseClient.js"></script>
-
-    <!-- Calendar functionality -->
+    <script src="auth.js"></script>
+    <script src="calendar.js"></script>
     <script>
-        $(document).ready(function() {
-            // Initialize calendar
-            $('#calendar').fullCalendar({
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultView: 'month',
-                editable: false,
-                displayEventTime: false, // Hide time since we're using all-day events
-                events: function(start, end, timezone, callback) {
-                    loadEvents().then(events => {
-                        callback(events);
-                    });
-                },
-                eventRender: function(event, element) {
-                    // Add tooltips to events
-                    element.attr('title', 
-                        `${event.title}\n${event.description || ''}\nStart: ${moment(event.start).format('YYYY-MM-DD')}\nEnd: ${moment(event.end).format('YYYY-MM-DD')}`
-                    );
-                }
-            });
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
-            // Add event listener for create button
-            $('#create-event-button').click(handleCreateEvent);
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
         });
-
-        async function loadEvents() {
-            try {
-                const { data, error } = await window.supabase
-                    .from('Events')
-                    .select('*');
-
-                if (error) throw error;
-
-                console.log('Raw events from database:', data); // Debug log
-
-                // Transform events for FullCalendar
-                const events = data.map(event => ({
-                    id: event.id,
-                    title: event.title,
-                    start: moment(event.start).format('YYYY-MM-DD'), // Format dates
-                    end: moment(event.end_time).format('YYYY-MM-DD'),
-                    description: event.description,
-                    allDay: true // Make all events all-day events
-                }));
-
-                console.log('Transformed events:', events); // Debug log
-                return events;
-            } catch (error) {
-                console.error('Error loading events:', error);
-                return [];
-            }
-        }
-
-        async function handleCreateEvent() {
-            const title = prompt('Enter event title:');
-            const description = prompt('Enter event description:');
-            const start = prompt('Enter start date (YYYY-MM-DD):');
-            const end_time = prompt('Enter end date (YYYY-MM-DD):');
-
-            if (!title || !start || !end_time) {
-                alert('Event title, start date, and end date are required.');
-                return;
-            }
-
-            try {
-                const { data, error } = await window.supabase
-                    .from('Events')
-                    .insert([{ 
-                        title, 
-                        description, 
-                        start,
-                        end_time
-                    }]);
-
-                if (error) throw error;
-
-                alert('Event added successfully');
-                
-                // Force a complete refresh of events
-                $('#calendar').fullCalendar('removeEvents');
-                $('#calendar').fullCalendar('refetchEvents');
-                
-            } catch (error) {
-                console.error('Error adding event:', error);
-                alert('Failed to add event: ' + error.message);
-            }
-        }
     </script>
 </body>
 </html>
