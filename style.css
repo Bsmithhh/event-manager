@@ -43,6 +43,18 @@
     --gradient-3: rgba(99, 102, 241, 0.15);  /* Indigo */
     --gradient-blur: 120px;
     --gradient-speed: 20s;
+
+    /* Light theme colors */
+    --light-text: #1a1a1a;
+    --light-bg: #ffffff;
+    --light-accent: #6366f1;
+    --light-border: rgba(0, 0, 0, 0.1);
+
+    /* Dark theme colors */
+    --dark-text: #ffffff;
+    --dark-bg: #1a1f2c;
+    --dark-accent: #a78bfa;
+    --dark-border: rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] {
@@ -92,6 +104,8 @@
 /* Base styles */
 body {
     font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
     margin: 0;
     padding: 80px 20px 20px 20px;
     min-height: 100vh;
@@ -195,30 +209,38 @@ nav.scrolled {
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 2rem;
     font-weight: 800;
-    background: linear-gradient(45deg, var(--accent-color), var(--gradient-end));
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent-color), var(--gradient-end));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
-    transition: all 0.3s ease;
+    padding: 5px 0;
+    letter-spacing: -0.5px;
 }
 
 .logo::after {
     content: '';
     position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    background: inherit;
-    filter: blur(15px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+    height: 2px;
+    background: linear-gradient(135deg, var(--accent-color), var(--gradient-end));
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
 }
 
 .logo:hover::after {
-    opacity: 0.5;
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 .auth-buttons {
@@ -575,8 +597,8 @@ ul {
     backdrop-filter: blur(4px);
     border: 1px solid var(--glass-border);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -585,12 +607,40 @@ ul {
     padding: 0.5rem;
     margin-right: 1rem;
     color: var(--text-primary);
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
+    font-size: 1.4rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-color), var(--gradient-end));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
 }
 
 .theme-toggle:hover {
-    transform: rotate(45deg);
+    transform: rotate(180deg);
+    box-shadow: 0 6px 20px var(--shadow-color);
+}
+
+.theme-toggle:hover::before {
+    opacity: 0.1;
+}
+
+/* Theme toggle icon animation */
+.theme-toggle span {
+    display: inline-block;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle:active span {
+    transform: scale(0.8);
 }
 
 /* Add these calendar-specific styles */
@@ -632,20 +682,26 @@ ul {
     transition: all 0.3s ease;
 }
 
-/* Event Categories */
+/* Event Categories with improved contrast */
 .fc-event.event-work {
-    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
-    border-color: #8a74ff !important;
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+    border-color: #6366f1 !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 .fc-event.event-social {
-    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
-    border-color: #a78bfa !important;
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+    border-color: #8b5cf6 !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 .fc-event.event-important {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
-    border-color: #6d28d9 !important;
+    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%) !important;
+    border-color: #7c3aed !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 /* Event Hover Effects */
@@ -663,7 +719,7 @@ ul {
 }
 
 .fc-title {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.9rem;
 }
 
@@ -714,7 +770,8 @@ ul {
     width: 100%;
     padding: 12px;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-weight: 400;
 }
 
 /* Dark mode - Keep text black */
@@ -765,7 +822,7 @@ ul {
     box-shadow: 
         0 8px 32px var(--calendar-shadow),
         0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    padding: 35px;
     position: relative;
     z-index: 1;
     padding-bottom: 100px;
@@ -776,13 +833,17 @@ ul {
     background: var(--calendar-header-bg);
     backdrop-filter: blur(10px);
     border-radius: 16px;
-    padding: 20px;
+    padding: 25px 30px;
     margin-bottom: 25px !important;
     border: 1px solid var(--calendar-border);
 }
 
 .fc-toolbar h2 {
     color: var(--fc-text-color) !important;
+    margin: 0 30px !important;
+    font-size: 2rem !important;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 /* Calendar Cells */
@@ -794,6 +855,7 @@ ul {
     background: var(--calendar-bg) !important;
     border-color: var(--calendar-border) !important;
     transition: all 0.3s ease;
+    padding: 8px !important;
 }
 
 .fc-day:hover {
@@ -833,15 +895,24 @@ ul {
 }
 
 /* Calendar Buttons */
+.fc-button-group {
+    gap: 10px;
+    display: flex !important;
+}
+
 .fc-button {
-    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    color: white !important;
+    font-weight: 500 !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: 8px 16px !important;
+    padding: 10px 20px !important;
     box-shadow: 
         0 4px 12px rgba(99, 102, 241, 0.2),
         inset 0 2px 4px rgba(255, 255, 255, 0.3) !important;
     transition: all 0.3s ease !important;
+    margin: 0 5px !important;
+    min-width: 100px;
 }
 
 .fc-button:hover {
@@ -993,18 +1064,24 @@ ul {
 
 /* Event Category Colors */
 .fc-event.event-work {
-    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
-    border-color: #8a74ff !important;
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+    border-color: #6366f1 !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 .fc-event.event-social {
-    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
-    border-color: #a78bfa !important;
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+    border-color: #8b5cf6 !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 .fc-event.event-important {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
-    border-color: #6d28d9 !important;
+    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%) !important;
+    border-color: #7c3aed !important;
+    color: white !important;
+    font-weight: 500;
 }
 
 /* Event details in modal */
@@ -1033,6 +1110,10 @@ ul {
     padding: 15px;
     background: rgba(0, 0, 0, 0.05);
     border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 [data-theme="dark"] .event-description {
@@ -1091,13 +1172,13 @@ h2 {
     background: var(--calendar-bg);
     backdrop-filter: blur(12px);
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px 30px;
     margin: 20px auto 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 25px;
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.1),
         inset 0 2px 4px rgba(255, 255, 255, 0.7);
@@ -1107,15 +1188,17 @@ h2 {
 
 /* Search Box Styling */
 .search-box input {
-    background: var(--calendar-bg);
-    border: 2px solid var(--calendar-border);
+    background: var(--light-bg);
+    color: var(--light-text);
+    border: 2px solid var(--light-border);
     border-radius: 12px;
-    padding: 12px 20px;
+    padding: 14px 24px;
     width: 300px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
+    font-weight: 400;
+    letter-spacing: 0.2px;
 }
 
 .search-box input:focus {
@@ -1129,22 +1212,22 @@ h2 {
 /* Category Filter Buttons */
 .category-filters {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
 .filter-btn {
-    background: var(--calendar-bg);
-    color: var(--text-primary);
-    border: 2px solid var(--calendar-border);
+    background: var(--light-bg);
+    color: var(--light-text);
+    border: 2px solid var(--light-border);
     border-radius: 30px;
-    padding: 10px 24px;
+    padding: 12px 28px;
     font-weight: 600;
-    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    letter-spacing: 0.5px;
 }
 
 .filter-btn::before {
@@ -1162,25 +1245,53 @@ h2 {
 
 .filter-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
     border-color: var(--accent-color);
     color: var(--accent-color);
+}
+
+.filter-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
 .filter-btn.active {
     background: linear-gradient(
         135deg,
-        #9d8cff 0%,
-        #8a74ff 100%
+        #6366f1 0%,
+        #4f46e5 100%
     );
     color: white;
     border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .filter-btn.active:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
     filter: brightness(1.1);
+}
+
+.filter-btn.active:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    filter: brightness(1);
+}
+
+[data-theme="dark"] .filter-btn {
+    background: var(--dark-bg);
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: linear-gradient(
+        135deg,
+        #a78bfa 0%,
+        #8b5cf6 100%
+    );
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
 }
 
 /* Login page styles */
@@ -1637,10 +1748,10 @@ h2 {
 /* Enhanced Calendar Typography */
 .fc-day-number {
     font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--calendar-number-color);
-    padding: 8px !important;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--light-text);
+    padding: 10px !important;
     opacity: 0.9;
     transition: all 0.3s ease;
 }
@@ -1651,10 +1762,10 @@ h2 {
 
 .fc-day-header {
     font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     padding: 12px 0 !important;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
 }
@@ -1714,7 +1825,7 @@ h2 {
 
 /* Dark Mode Adjustments */
 [data-theme="dark"] .fc-day-number {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--dark-text);
 }
 
 [data-theme="dark"] .fc-other-month .fc-day-number {
@@ -1732,21 +1843,24 @@ h2 {
 
 /* Event Categories */
 .event-work {
-    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
-    border-color: #8a74ff !important;
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+    border-color: #6366f1 !important;
     color: white !important;
+    font-weight: 500;
 }
 
 .event-social {
-    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
-    border-color: #a78bfa !important;
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+    border-color: #8b5cf6 !important;
     color: white !important;
+    font-weight: 500;
 }
 
 .event-important {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
-    border-color: #6d28d9 !important;
+    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%) !important;
+    border-color: #7c3aed !important;
     color: white !important;
+    font-weight: 500;
 }
 
 /* Filter Controls */
@@ -1775,8 +1889,8 @@ h2 {
 .filter-btn.active {
     background: linear-gradient(
         135deg,
-        #9d8cff 0%,
-        #8a74ff 100%
+        #6366f1 0%,
+        #4f46e5 100%
     );
     color: white;
     border: none;
@@ -1797,7 +1911,7 @@ h2 {
 /* Responsive Adjustments */
 @media screen and (max-width: 768px) {
     .calendar-container {
-        padding: 15px;
+        padding: 20px;
         margin: 10px;
         border-radius: 16px;
     }
@@ -1835,7 +1949,7 @@ h2 {
 
     /* Adjust calendar header */
     .fc-toolbar h2 {
-        font-size: 1.2rem !important;
+        font-size: 1.4rem !important;
         margin: 10px 0 !important;
     }
 
@@ -1941,43 +2055,45 @@ h2 {
 .linkedin-link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: #000;
+    gap: 12px;
+    color: #0077B5; /* LinkedIn brand color */
     text-decoration: none;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
+    background: white;
+    padding: 12px 24px;
     border-radius: 30px;
     backdrop-filter: blur(5px);
-    font-weight: 600;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 119, 181, 0.2);
+    letter-spacing: 0.2px;
 }
 
 .linkedin-link:hover {
-    color: #6366f1;
+    color: #0077B5;
     background: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 119, 181, 0.3);
 }
 
-.linkedin-link svg {
+.linkedin-link:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 119, 181, 0.2);
+}
+
+.linkedin-icon {
     width: 24px;
     height: 24px;
-    stroke: currentColor;
-}
-
-.linkedin-link span {
-    font-size: 0.9rem;
-    font-weight: 600;
+    fill: currentColor;
 }
 
 [data-theme="dark"] .linkedin-link {
-    color: #fff;
-    background: rgba(99, 102, 241, 0.9);
+    color: white;
+    background: #0077B5;
 }
 
 [data-theme="dark"] .linkedin-link:hover {
-    color: #fff;
-    background: #6366f1;
+    color: white;
+    background: #006396;
+    box-shadow: 0 8px 25px rgba(0, 119, 181, 0.4);
 }
 
