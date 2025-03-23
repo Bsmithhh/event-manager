@@ -633,22 +633,19 @@ ul {
 }
 
 /* Event Categories */
-.event-work {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;  /* Indigo */
-    border-color: #4f46e5 !important;
-    color: white !important;
+.fc-event.event-work {
+    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
+    border-color: #8a74ff !important;
 }
 
-.event-social {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;  /* Purple */
-    border-color: #7c3aed !important;
-    color: white !important;
+.fc-event.event-social {
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
+    border-color: #a78bfa !important;
 }
 
-.event-important {
-    background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;  /* Purple darker */
-    border-color: #7e22ce !important;
-    color: white !important;
+.fc-event.event-important {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
+    border-color: #6d28d9 !important;
 }
 
 /* Event Hover Effects */
@@ -837,7 +834,7 @@ ul {
 
 /* Calendar Buttons */
 .fc-button {
-    background: linear-gradient(135deg, var(--fc-event-bg) 0%, var(--fc-event-border) 100%) !important;
+    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;
     border: none !important;
     border-radius: 12px !important;
     padding: 8px 16px !important;
@@ -996,18 +993,18 @@ ul {
 
 /* Event Category Colors */
 .fc-event.event-work {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;  /* Indigo */
-    border-color: #4f46e5 !important;
+    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
+    border-color: #8a74ff !important;
 }
 
 .fc-event.event-social {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;  /* Purple */
-    border-color: #7c3aed !important;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
+    border-color: #a78bfa !important;
 }
 
 .fc-event.event-important {
-    background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;  /* Purple darker */
-    border-color: #7e22ce !important;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
+    border-color: #6d28d9 !important;
 }
 
 /* Event details in modal */
@@ -1171,10 +1168,13 @@ h2 {
 }
 
 .filter-btn.active {
-    background: linear-gradient(135deg, var(--accent-color), var(--gradient-end));
+    background: linear-gradient(
+        135deg,
+        #9d8cff 0%,
+        #8a74ff 100%
+    );
     color: white;
-    border-color: transparent;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    border: none;
 }
 
 .filter-btn.active:hover {
@@ -1732,20 +1732,20 @@ h2 {
 
 /* Event Categories */
 .event-work {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;  /* Indigo */
-    border-color: #4f46e5 !important;
+    background: linear-gradient(135deg, #9d8cff 0%, #8a74ff 100%) !important;  /* Soft Purple */
+    border-color: #8a74ff !important;
     color: white !important;
 }
 
 .event-social {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;  /* Purple */
-    border-color: #7c3aed !important;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;  /* Light Purple */
+    border-color: #a78bfa !important;
     color: white !important;
 }
 
 .event-important {
-    background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;  /* Purple darker */
-    border-color: #7e22ce !important;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;  /* Deep Purple */
+    border-color: #6d28d9 !important;
     color: white !important;
 }
 
@@ -1775,10 +1775,11 @@ h2 {
 .filter-btn.active {
     background: linear-gradient(
         135deg,
-        var(--accent-color) 0%,
-        var(--gradient-end) 100%
+        #9d8cff 0%,
+        #8a74ff 100%
     );
     color: white;
+    border: none;
 }
 
 /* Modal Styles - Consistent in both themes */
