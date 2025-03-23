@@ -85,6 +85,38 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Event Availability</h2>
+            <div class="poll-results">
+                <h3>Current Responses</h3>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Going</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress going" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Maybe</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress maybe" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Not Going</span>
+                            <span class="count">0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress not-going" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <form id="pollForm">
                 <div class="form-group">
                     <label for="respondent_name">Your Name:</label>
@@ -102,7 +134,9 @@
                     <label for="comment">Comment:</label>
                     <textarea id="comment" rows="3"></textarea>
                 </div>
-                <button type="submit" class="poll-btn">Submit Response</button>
+                <button type="submit" class="poll-btn">
+                    <span>Submit Response</span>
+                </button>
             </form>
         </div>
     </div>
