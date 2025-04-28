@@ -2560,3 +2560,115 @@ h2 {
     }
 }
 
+/* --- COMPACT FILTER CONTROLS & BUTTONS --- */
+.filter-controls {
+    background: var(--calendar-bg);
+    border: 1px solid var(--calendar-border);
+    width: 100%;
+    padding: 4px 0 2px 0;
+    margin: 0 0 6px 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    gap: 4px;
+    max-width: 100vw;
+    box-shadow: none;
+}
+
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 2px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-btn {
+    background: var(--calendar-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--calendar-border);
+    border-radius: 16px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    min-width: 48px;
+    min-height: 32px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.2px;
+    touch-action: manipulation;
+}
+
+/* --- CALENDAR CONTAINER TAKES MOST OF THE SCREEN --- */
+html, body {
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.calendar-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    margin: 0;
+    padding: 0;
+    border-radius: 10px;
+    background: var(--calendar-bg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    min-height: 0;
+    height: 1px; /* allow flex to control height */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#calendar {
+    flex: 1 1 auto;
+    min-height: 300px;
+    height: 100%;
+}
+
+/* --- RESPONSIVE: EVEN SMALLER ON MOBILE --- */
+@media screen and (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        padding: 2px 0 2px 0;
+        margin: 0 0 4px 0;
+        gap: 2px;
+    }
+    .category-filters {
+        gap: 2px;
+    }
+    .filter-btn {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+        min-width: 40px;
+        min-height: 28px;
+    }
+    .calendar-container {
+        border-radius: 6px;
+    }
+}
+
+/* --- ENSURE FOOTER DOESN'T OVERLAP --- */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    font-size: 0.7rem;
+    padding: 8px 0;
+    background: var(--glass-bg);
+    border-top: 1px solid var(--calendar-border);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
