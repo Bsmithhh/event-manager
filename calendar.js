@@ -1,11 +1,10 @@
-// Initialize calendar
 $(document).ready(function() {
     console.log('Calendar initialization starting...');
-    // Store the original events
+    
     let allEvents = [];
     let currentCategory = 'all';
 
-    // Update the events function to store events
+    
     const calendar = $('#calendar').fullCalendar({
         header: {
             left: 'prev,next today',
@@ -16,7 +15,7 @@ $(document).ready(function() {
         navLinks: true,
         editable: true,
         eventLimit: true,
-        displayEventTime: false, // Hide time
+        displayEventTime: false, 
         events: function(start, end, timezone, callback) {
             supabase
                 .from('Events')
