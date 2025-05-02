@@ -107,7 +107,7 @@ body {
     font-weight: 300;
     line-height: 1.6;
     margin: 0;
-    padding: 60px 0 20px 0; /* Remove horizontal padding */
+    padding: 140px 0 20px 0; /* Significantly increased top padding */
     min-height: 100vh;
     color: var(--text-primary);
     position: relative;
@@ -182,11 +182,11 @@ body {
 }
 
 nav {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-primary);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--glass-border);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    padding: 0.8rem;
+    padding: 1rem; /* Slightly increased padding */
     width: 100%;
     box-sizing: border-box;
     position: fixed;
@@ -195,6 +195,10 @@ nav {
     right: 0;
     z-index: 1000;
     transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px; /* Explicit height for nav bar */
 }
 
 nav.scrolled {
@@ -203,9 +207,10 @@ nav.scrolled {
 }
 
 .nav-container {
-    padding: 0 10px;
     width: 100%;
-    box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2706,4 +2711,43 @@ body {
     font-size: 1.1rem !important;
     margin: 0 4px !important;
     padding: 0 !important;
+}
+
+/* Search events container */
+.search-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 3rem auto; /* Increased margin */
+    padding: 2rem; /* Increased padding */
+    box-sizing: border-box;
+}
+
+.search-box {
+    width: 100%;
+    margin: 2rem 0; /* Increased margin */
+    position: relative;
+    top: 20px; /* Added top offset */
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--shadow-color);
+}
+
+.filter-controls {
+    margin-top: 2rem;
+    padding-top: 1.5rem; /* Increased padding */
 }
