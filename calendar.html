@@ -42,6 +42,7 @@
             </div>
         </div>
     </nav>
+    
 
     <h2>Calendar</h2>
     <div class="filter-controls">
@@ -124,6 +125,7 @@
             </form>
         </div>
     </div>
+   
 
     <!-- Load dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -151,5 +153,6 @@
             themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
         });
     </script>
+    <button class="fab-create-event" onclick="handleCreateEvent()" aria-label="Create Event">＋</button>
 </body>
 </html>
